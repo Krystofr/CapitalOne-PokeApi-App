@@ -1,9 +1,12 @@
 package com.app.capitalone_pokeapi_app.presentation
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -44,13 +47,13 @@ import coil.request.ImageRequest
 import com.app.capitalone_pokeapi_app.R
 import com.app.capitalone_pokeapi_app.domain.model.Pokemon
 import com.app.capitalone_pokeapi_app.utils.Resource
-import org.koin.compose.viewmodel.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun PokemonListScreen(
-    viewModel: PokemonViewModel = koinViewModel(),
-    onNavigateToDetail: (Int) -> Unit
+fun SharedTransitionScope.PokemonListScreen(
+    viewModel: PokemonViewModel,
+    onNavigateToDetail: (Int) -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     val state by viewModel.pokemonListState.collectAsStateWithLifecycle()
 
@@ -95,6 +98,7 @@ fun PokemonListScreen(
                                 .fillMaxSize()
                         ) {
                             PokemonItem(
+                                animatedVisibilityScope,
                                 pokemon = pokemon,
                                 onNavigateToDetail = {
                                     onNavigateToDetail(pokemon.id)
@@ -113,14 +117,20 @@ fun PokemonListScreen(
 }
 
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun PokemonItem(pokemon: Pokemon, onNavigateToDetail: (Int) -> Unit) {
+fun SharedTransitionScope.PokemonItem(
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    pokemon: Pokemon,
+    onNavigateToDetail: (Int) -> Unit
+) {
 
     val imageUrl = ImageRequest.Builder(LocalContext.current)
         .data(pokemon.imageUrl)
         .crossfade(true)
         .error(R.drawable.ic_launcher_foreground)
         .build()
+    val pokemonName = pokemon.name
 
     Card(
         modifier = Modifier
@@ -144,17 +154,32 @@ fun PokemonItem(pokemon: Pokemon, onNavigateToDetail: (Int) -> Unit) {
                     contentDescription = pokemon.name,
                     modifier = Modifier
                         .size(150.dp)
-                        .aspectRatio(1f),
+                        .aspectRatio(1f)
+                        .sharedElement(
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            boundsTransform = { _, _ ->
+                                tween(durationMillis = 1000)
+                            },
+                            sharedContentState = rememberSharedContentState(key = "image/$imageUrl")
+                        ),
                     contentScale = ContentScale.Crop
                 )
             }
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                pokemon.name,
+                pokemonName,
                 fontWeight = FontWeight.Bold,
                 color = Black,
                 fontSize = 14.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .sharedElement(
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    boundsTransform = { _, _ ->
+                        tween(durationMillis = 1000)
+                    },
+                    sharedContentState = rememberSharedContentState(key = "text/$pokemonName")
+                ),
             )
         }
     }

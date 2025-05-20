@@ -1,5 +1,9 @@
 package com.app.capitalone_pokeapi_app.presentation
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,13 +41,13 @@ import coil.request.ImageRequest.Builder
 import com.app.capitalone_pokeapi_app.R
 import com.app.capitalone_pokeapi_app.domain.model.PokemonDetail
 import com.app.capitalone_pokeapi_app.utils.Resource
-import org.koin.compose.viewmodel.koinViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalSharedTransitionApi::class)
 @Composable
-fun PokemonDetailsScreen(
+fun SharedTransitionScope.PokemonDetailsScreen(
     pokemonId: Int,
-    viewModel: PokemonViewModel = koinViewModel(),
+    viewModel: PokemonViewModel,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     onBack: () -> Unit
 ) {
     val state by viewModel.pokemonDetailState.collectAsStateWithLifecycle()
@@ -91,6 +95,7 @@ fun PokemonDetailsScreen(
                     .crossfade(true)
                     .error(R.drawable.ic_launcher_foreground)
                     .build()
+                val pokemonName = pokemon.name
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -104,12 +109,28 @@ fun PokemonDetailsScreen(
                             contentDescription = pokemon.name,
                             modifier = Modifier
                                 .size(150.dp)
-                                .aspectRatio(1f),
+                                .aspectRatio(1f)
+                                .sharedElement(
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                    boundsTransform = { _, _ ->
+                                        tween(durationMillis = 1000)
+                                    },
+                                    sharedContentState = rememberSharedContentState(key = "image/$imageUrl")
+                                ),
                             contentScale = ContentScale.Crop
                         )
                     }
                     Spacer(modifier = Modifier.height(24.dp))
-                    Text(text = pokemon.name, fontSize = 24.sp, color = Black)
+                    Text(
+                        text = pokemonName, fontSize = 24.sp, color = Black,
+                        modifier = Modifier.sharedElement(
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            boundsTransform = { _, _ ->
+                                tween(durationMillis = 1000)
+                            },
+                            sharedContentState = rememberSharedContentState(key = "text/$pokemonName")
+                        ),
+                    )
                     Text(text = "Height: ${pokemon.height}")
                 }
             }
