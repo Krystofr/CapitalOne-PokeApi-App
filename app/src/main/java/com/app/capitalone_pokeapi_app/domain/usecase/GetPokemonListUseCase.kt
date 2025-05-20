@@ -8,7 +8,6 @@ import kotlinx.coroutines.flow.Flow
 class GetPokemonListUseCase(
     private val repository: PokemonRepository
 ) {
-    operator fun invoke(): Flow<Resource<List<Pokemon>>> {
-        return repository.getPokemonList()
-    }
+    operator fun invoke(): Flow<Resource<List<Pokemon>>> = repository.getPokemonList()
+
 }
