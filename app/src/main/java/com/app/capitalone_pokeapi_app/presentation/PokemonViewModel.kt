@@ -1,5 +1,6 @@
 package com.app.capitalone_pokeapi_app.presentation
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.app.capitalone_pokeapi_app.domain.model.Pokemon
@@ -26,8 +27,11 @@ class PokemonViewModel(
     val pokemonDetailState = _pokemonDetailState.asStateFlow()
 
     fun loadPokemonList() {
+        Log.d("PokemonVM", "loadPokemonList() triggered")
+
         viewModelScope.launch {
             getPokemonListUseCase().onEach { result ->
+                Log.d("PokemonVM", "Received result: $result")
                 _pokemonListState.value = result
             }.catch { e ->
                 _pokemonListState.value = Resource.Error(e.message ?: "An error occurred")
