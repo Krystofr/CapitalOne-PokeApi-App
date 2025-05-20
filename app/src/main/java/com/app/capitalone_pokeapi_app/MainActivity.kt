@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.navigation.compose.rememberNavController
+import com.app.capitalone_pokeapi_app.navigation.PokemonNavigation
 import com.app.capitalone_pokeapi_app.ui.theme.CapitalOnePokeApiAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -12,7 +14,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CapitalOnePokeApiAppTheme {
-
+                val navController = rememberNavController()
+                PokemonNavigation(navController)
             }
         }
     }
