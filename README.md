@@ -30,6 +30,14 @@ This is a responsive Pokemon app built with Jetpack Compose, using Clean Archite
 - No **pagination** or **offline caching** was implemented due to time constraints.
 - UI Tests use basic structure; more edge case assertions would be added in a real project.
 
+### UI Test Coverage
+Compose UI tests were not included due to time constraints. However, the app was architected with testability in mind, using StateFlow-based ViewModels and a clean separation between UI and logic layers.
+Given more time, I would have written Compose UI tests to verify:
+- Loading and error states on both the list and detail screens
+- Rendering of Pokémon data and user interactions such as, tapping an item to navigate.
+
+The app is structured to support Compose testing via createComposeRule() and fake ViewModel injection. This would make screen-level tests easy to implement as a next step.
+
 ---
 
 ## What Works
