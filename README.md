@@ -28,8 +28,7 @@ This is a responsive Pokemon app built with Jetpack Compose, using Clean Archite
 
 - The **shared element transition is partially complete** — the image and name from the list screen are passed to the detail screen, but due to API latency, the matching elements are sometimes not ready when the transition starts. With more time, this could be resolved by pre-caching or stubbing detail data at the navigation point.
 - No **pagination** or **offline caching** was implemented due to time constraints.
-- UI Tests use basic structure; more edge case assertions would be added in a real project.
-
+  
 ### UI Test Coverage
 Compose UI tests were not included due to time constraints. However, the app was architected with testability in mind, using StateFlow-based ViewModels and a clean separation between UI and logic layers.
 Given more time, I would have written Compose UI tests to verify:
@@ -63,6 +62,5 @@ The app is structured to support Compose testing via createComposeRule() and fak
 Tests are written using:
 - `JUnit`
 - `Turbine` for `Flow` assertions
-- `Compose UI Test` framework for screen rendering assertions
-
+- 
 ---
